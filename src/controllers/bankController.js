@@ -1,6 +1,7 @@
 const express = require("express");
 const BankModel = require("../models/bankModels");
 const jwt = require("jsonwebtoken");
+const cloudinary = require("../utils/fileUpload");
 
 const generateToken = (id) => {
   //1. what do you want to create the token with, 2. the tool with the help of which it will create the token, 3. expiring time
@@ -39,7 +40,6 @@ const registerUser = async (req, res) => {
     res.status(201).json({
       name,
       email,
-      
     });
   } else {
     res.status(400);
@@ -52,7 +52,30 @@ const getBankDetails = (req, res) => {
   res.status(200).send(`the bank_id is ${id}`);
 };
 
+const uploadData = (req, res) => {
+  cloudinary.uploader
+    .upload(req.file.path, {
+      folder: "Bank Data",
+      resource_type: "image",
+    })
+    .then((result) => {
+      console.log(result);
+      res.status(200).json({
+        success: true,
+        message: "Uploaded!",
+        data: result,
+      });
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).json({
+        success: false,
+        message: "Error",
+      });
+    });
+};
 module.exports = {
   getBankDetails,
   registerUser,
+  uploadData,
 };

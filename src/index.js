@@ -11,6 +11,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
 app.use(bodyParser.json());
+
 app.use("/beanbyte.com/banks", urlRoutes);
 
 connectToDatabase()
