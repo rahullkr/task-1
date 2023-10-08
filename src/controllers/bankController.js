@@ -74,8 +74,57 @@ const uploadData = (req, res) => {
       });
     });
 };
+
+const getAllDetails = async (req, res) => {
+  //  filetering
+  // const { name } = req.query;
+  // // console.log(name)
+  // const filter = name ? { name: { $regex: new RegExp(name, 'i') } } : {};
+
+  // try {
+  //   const details = await BankModel.find(filter);
+  //   res.status(200).json(details);
+  // } catch (error) {
+
+  //   res.status(500).json({ error: 'Internal Server Error' });
+  // }
+
+  // sorting
+
+  // const sortOptions = { name: -1 };
+  // try {
+  //   const details = await BankModel.find({}).sort(sortOptions);
+  //   res.status(200).json(details);
+  // } catch (error) {
+  //   res.status(500).json({ error: 'Internal Server Error' });
+  // }
+
+  // pagination
+  try {
+
+    // const count = await BankModel.countDocuments({});
+    // console.log(count)
+    
+    const { page } = req.query;
+    const dataPerPage = 2;
+    const details = await BankModel.find()
+      .skip(page * dataPerPage)
+      .limit(dataPerPage);
+    // console.log(details);
+
+    res.status(200).json({
+      details,
+    });
+
+  } catch (error) {
+
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+  res.send("couting done");
+};
 module.exports = {
   getBankDetails,
   registerUser,
   uploadData,
+  getAllDetails,
 };
