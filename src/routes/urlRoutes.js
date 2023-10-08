@@ -1,15 +1,17 @@
-const express = require("express");
-const router = express.Router();
-const {
+import express from "express";
+import {
   getBankDetails,
   registerUser,
   uploadData,
-  getAllDetails
-} = require("../controllers/bankController");
+  getAllDetails,
+} from "../controllers/bankController.js";
+import upload from "../middlewares/multer.js";
 
-const upload = require("../middlewares/multer");
+const router = express.Router();
+
 router.post("/register", registerUser);
 router.get("/:bank_id", getBankDetails);
 router.post("/upload", upload.single("image"), uploadData);
-router.get('/', getAllDetails);
-module.exports = router;
+router.get("/", getAllDetails);
+
+export default router;

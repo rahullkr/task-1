@@ -1,10 +1,10 @@
-const multer = require("multer");
+import multer from "multer";
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination: (req, file, cb) => {
     cb(null, "src/uploads");
   },
-  filename: function (req, file, cb) {
+  filename: (req, file, cb) => {
     cb(
       null,
       new Date().toISOString().replace(/:/g, "-") + "-" + file.originalname
@@ -12,16 +12,18 @@ const storage = multer.diskStorage({
   },
 });
 
-function fileFilter(req, file, cb) {
+const fileFilter = (req, file, cb) => {
   if (
     file.mimetype === "image/png" ||
     file.mimetype === "image/jpg" ||
     file.mimetype === "image/jpeg"
   ) {
     cb(null, true);
-  } else cb(null, false);
-}
+  } else {
+    cb(null, false);
+  }
+};
 
 const upload = multer({ storage, fileFilter });
 
-module.exports = upload;
+export default upload;

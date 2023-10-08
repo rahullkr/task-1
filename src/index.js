@@ -1,11 +1,13 @@
-const experss = require("express");
-const bodyParser = require("body-parser");
+import express from "express";
+import bodyParser from "body-parser";
+import dotenv from "dotenv";
+import urlRoutes from "./routes/urlRoutes.js";
+import connectToDatabase from "./config/database.js";
 
-const dotenv = require("dotenv").config();
-const urlRoutes = require("./routes/urlRoutes");
-const connectToDatabase = require("./config/database");
+dotenv.config();
 const PORT = process.env.PORT;
-const app = experss();
+const app = express();
+
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -14,12 +16,13 @@ app.use(bodyParser.json());
 
 app.use("/beanbyte.com/banks", urlRoutes);
 
-connectToDatabase()
-  .then(() => {
+(async () => {
+  try {
+    await connectToDatabase();
     app.listen(PORT, () => {
       console.log(`Server started at ${PORT}`);
     });
-  })
-  .catch((error) => {
+  } catch (error) {
     console.error("Error starting the server:", error);
-  });
+  }
+})();

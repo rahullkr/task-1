@@ -1,26 +1,26 @@
-const express = require("express");
-const BankModel = require("../models/bankModels");
-const jwt = require("jsonwebtoken");
-const cloudinary = require("../utils/fileUpload");
+import express from "express";
+import BankModel from "../models/bankModels.js";
+import jwt from "jsonwebtoken";
+import cloudinary from "../utils/fileUpload.js";
 
 const generateToken = (id) => {
-  //1. what do you want to create the token with, 2. the tool with the help of which it will create the token, 3. expiring time
+  // 1. what do you want to create the token with, 2. the tool with the help of which it will create the token, 3. expiring time
   return jwt.sign({ id }, process.env.JWT_SECRETS, { expiresIn: "1d" });
 };
 
 const registerUser = async (req, res) => {
-  // for register, you have to check 3 things
-  // 1- if either of them is not provided return error;
-  // 2- if email exists
-  // 3- if password satisfies the condition
+  // For registration, you have to check 3 things
+  // 1- if either of them is not provided, return an error;
+  // 2- if the email exists
+  // 3- if the password satisfies the condition
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
     res.status(400);
-    throw new Error("please fill all the details");
+    throw new Error("please fill in all the details");
   }
   if (password.length < 8) {
     res.status(400);
-    throw new Error("password must be of 8 characters");
+    throw new Error("password must be at least 8 characters");
   }
 
   const userExist = await BankModel.findOne({ email });
@@ -76,7 +76,7 @@ const uploadData = (req, res) => {
 };
 
 const getAllDetails = async (req, res) => {
-  //  filetering
+  // Filtering
   // const { name } = req.query;
   // // console.log(name)
   // const filter = name ? { name: { $regex: new RegExp(name, 'i') } } : {};
@@ -89,7 +89,7 @@ const getAllDetails = async (req, res) => {
   //   res.status(500).json({ error: 'Internal Server Error' });
   // }
 
-  // sorting
+  // Sorting
 
   // const sortOptions = { name: -1 };
   // try {
@@ -99,32 +99,22 @@ const getAllDetails = async (req, res) => {
   //   res.status(500).json({ error: 'Internal Server Error' });
   // }
 
-  // pagination
+  // Pagination
   try {
-
-    // const count = await BankModel.countDocuments({});
-    // console.log(count)
-    
+    // Retrieve the 'page' query parameter
     const { page } = req.query;
     const dataPerPage = 2;
-    const details = await BankModel.find()
-      .skip(page * dataPerPage)
-      .limit(dataPerPage);
-    // console.log(details);
+
+    const skipCount = (page - 1) * dataPerPage;
+
+    const details = await BankModel.find().skip(skipCount).limit(dataPerPage);
 
     res.status(200).json({
       details,
     });
-
   } catch (error) {
-
     res.status(500).json({ error: "Internal Server Error" });
   }
-  res.send("couting done");
 };
-module.exports = {
-  getBankDetails,
-  registerUser,
-  uploadData,
-  getAllDetails,
-};
+
+export { getBankDetails, registerUser, uploadData, getAllDetails };
