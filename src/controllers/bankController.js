@@ -2,6 +2,7 @@ import express from "express";
 import BankModel from "../models/bankModels.js";
 import jwt from "jsonwebtoken";
 import cloudinary from "../utils/fileUpload.js";
+import { authSchema } from "../helpers/validationSchema.js";
 
 const generateToken = (id) => {
   // 1. what do you want to create the token with, 2. the tool with the help of which it will create the token, 3. expiring time
@@ -13,26 +14,29 @@ const registerUser = async (req, res) => {
   // 1- if either of them is not provided, return an error;
   // 2- if the email exists
   // 3- if the password satisfies the condition
-  const { name, email, password } = req.body;
-  if (!name || !email || !password) {
-    res.status(400);
-    throw new Error("please fill in all the details");
-  }
-  if (password.length < 8) {
-    res.status(400);
-    throw new Error("password must be at least 8 characters");
-  }
+  const result = await authSchema.validateAsync(req.body);
+  // const { name, email, password } = req.body;
 
-  const userExist = await BankModel.findOne({ email });
+  //  console.log(result);
+  // if (!name || !email || !password) {
+  //   res.status(400);
+  //   throw new Error("please fill in all the details");
+  // }
+  // if (password.length < 8) {
+  //   res.status(400);
+  //   throw new Error("password must be at least 8 characters");
+  // }
+
+  const userExist = await BankModel.findOne({ email: result.email });
   if (userExist) {
     res.status(400);
     throw new Error("email already exists");
   }
 
   const user = await BankModel.create({
-    name,
-    email,
-    password,
+    name: result.name,
+    email: result.email,
+    password: result.password,
   });
   const token = generateToken(user._id);
   if (user) {
