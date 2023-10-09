@@ -6,7 +6,7 @@ import { authSchema } from "../helpers/validationSchema.js";
 
 const generateToken = (id) => {
   // 1. what do you want to create the token with, 2. the tool with the help of which it will create the token, 3. expiring time
-  return jwt.sign({ id }, process.env.JWT_SECRETS, { expiresIn: "1d" });
+  return jwt.sign({ id }, process.env.JWT_SECRETS, { expiresIn: "30m" });
 };
 
 const registerUser = async (req, res) => {
@@ -121,4 +121,47 @@ const getAllDetails = async (req, res) => {
   }
 };
 
-export { getBankDetails, registerUser, uploadData, getAllDetails };
+const forgetPassword = async (req, res) => {
+  const { email } = req.body;
+  const user = await BankModel.findOne({ email });
+  // console.log(user._id);
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+  const token = generateToken(user._id);
+  // console.log(token);
+
+  const link = `http://localhost:3000/beanbyte.com/banks/resetpassword/${user._id}/${token}`;
+  console.log(link);
+  res.send(link);
+};
+
+const resetPassword = async (req, res) => {
+  const { id, token } = req.params;
+
+  //now we have to check if the coming id exists in the database or not
+
+  const user = await BankModel.findById(id);
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+  try {
+    jwt.verify(token, process.env.JWT_SECRETS, (err) => {
+      if (err) {
+        return res.status(400).json({ message: "Invalid token" });
+      }
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
+
+  res.send("got the id and token ");
+};
+export {
+  getBankDetails,
+  registerUser,
+  uploadData,
+  getAllDetails,
+  forgetPassword,
+  resetPassword,
+};
