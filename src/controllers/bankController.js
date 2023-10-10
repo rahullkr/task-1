@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import cloudinary from "../utils/fileUpload.js";
 import { authSchema } from "../helpers/validationSchema.js";
 
+
 const generateToken = (id) => {
   // 1. what do you want to create the token with, 2. the tool with the help of which it will create the token, 3. expiring time
   return jwt.sign({ id }, process.env.JWT_SECRETS, { expiresIn: "30m" });
@@ -39,6 +40,7 @@ const registerUser = async (req, res) => {
     password: result.password,
   });
   const token = generateToken(user._id);
+  res.cookie("token", token, { httpOnly: true, maxAge: 60 * 30 * 1000 });
   if (user) {
     const { name, email } = user;
     res.status(201).json({
@@ -157,6 +159,12 @@ const resetPassword = async (req, res) => {
 
   res.send("got the id and token ");
 };
+
+const cacheData = async (req, res) => {
+  const { key, value } = req.body;
+
+};
+
 export {
   getBankDetails,
   registerUser,
@@ -164,4 +172,5 @@ export {
   getAllDetails,
   forgetPassword,
   resetPassword,
+
 };

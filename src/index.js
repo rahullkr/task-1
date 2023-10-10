@@ -3,18 +3,25 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import urlRoutes from "./routes/urlRoutes.js";
 import connectToDatabase from "./config/database.js";
-
+import rateLimit from "express-rate-limit";
+import cors from "cors";
+app.use(cors());
 dotenv.config();
 const PORT = process.env.PORT;
 const app = express();
 
+const limiter = rateLimit({
+  windowMs: 16 * 50 * 1000, //15 min
+  max: 5,
+  message: "too many request, try after an hour",
+});
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
 app.use(bodyParser.json());
 
-app.use("/beanbyte.com/banks", urlRoutes);
+app.use("/beanbyte.com/banks", limiter, urlRoutes);
 
 (async () => {
   try {
