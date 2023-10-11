@@ -3,6 +3,7 @@ import BankModel from "../models/bankModels.js";
 import jwt from "jsonwebtoken";
 import cloudinary from "../utils/fileUpload.js";
 import { authSchema } from "../helpers/validationSchema.js";
+import redisClient from "../utils/redisCache.js";
 
 const generateToken = (id) => {
   // 1. what do you want to create the token with, 2. the tool with the help of which it will create the token, 3. expiring time
@@ -39,7 +40,7 @@ const registerUser = async (req, res) => {
     password: result.password,
   });
   const token = generateToken(user._id);
-  res.cookie("token", token, { httpOnly: true, maxAge: 60 * 30 * 1000 });
+  res.cookie("token", token, { httpOnly: true, maxAge: 60 * 30 * 1000 }); //30 min
   if (user) {
     const { name, email } = user;
     res.status(201).json({
@@ -105,21 +106,19 @@ const getAllDetails = async (req, res) => {
   // }
 
   // Pagination
-  try {
-    // Retrieve the 'page' query parameter
-    const { page } = req.query;
-    const dataPerPage = 2;
-
+  const { page } = req.query;
+  const dataPerPage = 2;
+  const cacheKey = `bankDetails_${page}`;
+  let cacheData = await redisClient.get(cacheKey);
+  if (!cacheData) {
     const skipCount = (page - 1) * dataPerPage;
 
     const details = await BankModel.find().skip(skipCount).limit(dataPerPage);
-
-    res.status(200).json({
-      details,
-    });
-  } catch (error) {
-    res.status(500).json({ error: "Internal Server Error" });
+    await redisClient.set(cacheKey, JSON.stringify(details), { EXP: 3600 });
+    return res.status(200).json({ details, fromCache: false });
   }
+  cacheData = JSON.parse(cacheData);
+  return res.status(200).json({ cacheData, fromCache: true });
 };
 
 const forgetPassword = async (req, res) => {

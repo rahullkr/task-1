@@ -6,14 +6,15 @@ import connectToDatabase from "./config/database.js";
 import rateLimit from "express-rate-limit";
 import cors from "cors";
 
+
 dotenv.config();
 const PORT = process.env.PORT;
 const app = express();
 app.use(cors());
 const limiter = rateLimit({
-  windowMs: 1000, //15 min
+  windowMs: 2 * 1000, // 2 second
   max: 1,
-  message: "too many request, try after an hour",
+  message: "too many request, try after two second",
 });
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
