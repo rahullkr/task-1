@@ -111,11 +111,16 @@ const getAllDetails = async (req, res) => {
   const cacheKey = `bankDetails_${page}`;
   let cacheData = await redisClient.get(cacheKey);
   if (!cacheData) {
-    const skipCount = (page - 1) * dataPerPage;
+    try {
+      const skipCount = (page - 1) * dataPerPage;
+      const details = await BankModel.find().skip(skipCount).limit(dataPerPage);
 
-    const details = await BankModel.find().skip(skipCount).limit(dataPerPage);
-    await redisClient.set(cacheKey, JSON.stringify(details), { EXP: 3600 });
-    return res.status(200).json({ details, fromCache: false });
+      await redisClient.set(cacheKey, JSON.stringify(details), { EX: 3600 });
+
+      return res.status(200).json({ details, fromCache: false });
+    } catch (error) {
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
   }
   cacheData = JSON.parse(cacheData);
   return res.status(200).json({ cacheData, fromCache: true });
@@ -156,10 +161,6 @@ const resetPassword = async (req, res) => {
   }
 
   res.send("got the id and token ");
-};
-
-const cacheData = async (req, res) => {
-  const { key, value } = req.body;
 };
 
 export {

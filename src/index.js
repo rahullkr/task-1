@@ -5,11 +5,12 @@ import urlRoutes from "./routes/urlRoutes.js";
 import connectToDatabase from "./config/database.js";
 import rateLimit from "express-rate-limit";
 import cors from "cors";
-
+import helmet from "helmet";
 
 dotenv.config();
 const PORT = process.env.PORT;
 const app = express();
+app.use(helmet());
 app.use(cors());
 const limiter = rateLimit({
   windowMs: 2 * 1000, // 2 second
