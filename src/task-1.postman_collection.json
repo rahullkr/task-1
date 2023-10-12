@@ -1,0 +1,189 @@
+{
+	"info": {
+		"_postman_id": "04629944-43c5-4549-b59f-a0d9c7b49852",
+		"name": "task-1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23418835"
+	},
+	"item": [
+		{
+			"name": "getDetails",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/beanbyte.com/banks/3434/branches/2323",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"beanbyte.com",
+						"banks",
+						"3434",
+						"branches",
+						"2323"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"john\", \r\n    \"email\": \"john@john.com\",\r\n    \"password\": \"qwertyqwerty\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/beanbyte.com/banks/register",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"beanbyte.com",
+						"banks",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "upload data",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "image",
+							"type": "file",
+							"src": "/E:/wallpaper/pexels-stein-egil-liland-1933239.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:3000/beanbyte.com/banks/upload",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"beanbyte.com",
+						"banks",
+						"upload"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getalldetails",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": {
+					"raw": "localhost:3000/beanbyte.com/banks?page=2",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"beanbyte.com",
+						"banks"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "forgetpasswrod",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "abc@example.com",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:3000/beanbyte.com/banks/forgetpassword",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"beanbyte.com",
+						"banks",
+						"forgetpassword"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "resetpassword",
+			"request": {
+				"method": "POST",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "sendemails",
+			"request": {
+				"method": "POST",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "cachedata",
+			"request": {
+				"method": "POST",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
